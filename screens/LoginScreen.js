@@ -10,26 +10,69 @@ class LoginScreen extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      email: ''
+      email: {
+        value: "",
+        touched: false
+      },
+      password: {
+        value: "",
+        touched: false
+      },
     }
   }
 
-  hanldeChange = ({ email }) => {
-    this.setState({ email })
+  hanldeChange = ({ value }) => {
+    this.setState(prevState => {
+      return {
+          ...prevState,
+          ['email']: {
+            ...prevState['email'],
+            value: value,
+            touched: true
+          }
+        
+      };
+    });
   }
 
   handleSubmitForm = () => {
     console.log('test submiting form method')
   }
 
-  handleCloseIconPress = () => {
+  // handleCloseIconPress = (key) => {
+  //   console.log('test handle close icon')
+  //   console.log(key, 'key powinnien byc email')
+
+  //   this._clearingInput(key);
+  // }
+
+  _clearingInput = (key) => {
     console.log('test handle close icon')
+    console.log(key, 'key z clearing inpuit')
+
+
+    this.setState(prevState => {
+      console.log(prevState)
+      return {
+          ...prevState,
+          [key]: {
+            ...prevState[key],
+            value: '',
+            touched: false
+          }
+        
+      };
+    });
+
+
   }
 
   render() {
     const { email } = this.state;
     return (
+
       <Grid style={styles.container}>
+
         <Row size={45}>
           <Col style={styles.flexCenter}>
             <Row style={styles.logoContainer} >
@@ -44,15 +87,26 @@ class LoginScreen extends React.Component {
             <Form onSubmit={this.handleSubmitForm}>
               <Item rounded style={styles.item} >
                 <Icon active name='mail' style={styles.icon} />
-                <Input placeholderTextColor='rgba(255,255,255,0.6)' placeholder='E-mail' style={styles.input} value={email} onChangeText={(email) => this.hanldeChange({ email })} />
-                {/* <Icon name='close-circle' /> */}
-  
-                  <Icon name='close' onPress={this.handleCloseIconPress}/>
-          
+                <Input
+                  placeholderTextColor='rgba(255,255,255,0.6)'
+                  placeholder='E-mail'
+                  style={styles.input}
+                  value={email.value}
+                  onChangeText={(email) => this.hanldeChange({ email })}
+                // onBlur={() => this.setState({ email: 'EMAIL Z ON BLUR' })}
+                />
+
+                {this.state.email.touched ? <Icon name='close' onPress={() => this._clearingInput('email')} /> : null}
+
+
               </Item>
               <Item rounded style={styles.item} >
                 <Icon active name='lock' style={styles.icon} />
-                <Input placeholderTextColor='rgba(255,255,255,0.6)' placeholder='Password' style={styles.input} />
+                <Input
+                  placeholderTextColor='rgba(255,255,255,0.6)'
+                  placeholder='Password'
+                  style={styles.input}
+                />
               </Item>
               <Button rounded block style={styles.loginButton}><Text style={styles.loginButtonText}>Login</Text></Button>
             </Form>
@@ -79,7 +133,6 @@ class LoginScreen extends React.Component {
             <Text>Skip</Text>
           </Button>
         </Row>
-
       </Grid >
 
 
@@ -122,9 +175,9 @@ const styles = StyleSheet.create({
   },
   item: {
     backgroundColor: 'rgba(200,200,200,0.3)',
-    //borderColor: 'rgba(200,200,200,0.3)',
+    borderColor: 'rgba(200,200,200,0.3)',
     marginBottom: 15,
-    borderColor: 'red',
+
 
 
   },

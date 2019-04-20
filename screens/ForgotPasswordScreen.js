@@ -92,7 +92,7 @@ const styles = StyleSheet.create({
         color: 'white',
 
     },
-    SendEmailButton: {
-        marginTop: 5
+    sendEmailButton: {
+        marginTop: 15
     },
 });

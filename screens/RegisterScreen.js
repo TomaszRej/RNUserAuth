@@ -40,7 +40,10 @@ class RegisterScreen extends React.Component {
                                 <Icon active name='lock' style={styles.icon} />
                                 <Input placeholderTextColor='rgba(255,255,255,0.6)' placeholder='Confirm Password' style={styles.input} />
                             </Item>
-                            <Button rounded bordered block light style={styles.registerButton}><Text style={styles.loginButtonText}>Next</Text></Button>
+                            <Button  rounded bordered block light style={styles.registerButton}
+                            onPress={() => this.props.navigation.navigate('App')}>
+                            <Text style={styles.loginButtonText}>Next</Text>
+                            </Button>
                         </Form>
                     </Content>
                 </Row>
