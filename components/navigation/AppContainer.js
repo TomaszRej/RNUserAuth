@@ -8,7 +8,7 @@ import LoginScreen from "../../screens/LoginScreen";
 import ForgotPasswordScreen from '../../screens/ForgotPasswordScreen';
 
 const AuthStackNavigator = createStackNavigator({
-
+     //ForgotPassword: ForgotPasswordScreen,
     Login: LoginScreen,
     Register: RegisterScreen,
     ForgotPassword: ForgotPasswordScreen

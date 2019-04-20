@@ -7,10 +7,30 @@ class LoginScreen extends React.Component {
     header: null,
   };
 
+  constructor(props) {
+    super(props);
+    this.state = {
+      email: ''
+    }
+  }
+
+  hanldeChange = ({ email }) => {
+    this.setState({ email })
+  }
+
+  handleSubmitForm = () => {
+    console.log('test submiting form method')
+  }
+
+  handleCloseIconPress = () => {
+    console.log('test handle close icon')
+  }
+
   render() {
+    const { email } = this.state;
     return (
       <Grid style={styles.container}>
-        <Row size={40}>
+        <Row size={45}>
           <Col style={styles.flexCenter}>
             <Row style={styles.logoContainer} >
               <Col style={styles.flexCenter}>
@@ -19,12 +39,16 @@ class LoginScreen extends React.Component {
             </Row>
           </Col>
         </Row>
-        <Row size={55}>
+        <Row size={48}>
           <Content>
-            <Form >
+            <Form onSubmit={this.handleSubmitForm}>
               <Item rounded style={styles.item} >
-                <Icon active name='person' style={styles.icon} />
-                <Input placeholderTextColor='rgba(255,255,255,0.6)' placeholder='E-mail' style={styles.input} />
+                <Icon active name='mail' style={styles.icon} />
+                <Input placeholderTextColor='rgba(255,255,255,0.6)' placeholder='E-mail' style={styles.input} value={email} onChangeText={(email) => this.hanldeChange({ email })} />
+                {/* <Icon name='close-circle' /> */}
+  
+                  <Icon name='close' onPress={this.handleCloseIconPress}/>
+          
               </Item>
               <Item rounded style={styles.item} >
                 <Icon active name='lock' style={styles.icon} />
@@ -50,12 +74,12 @@ class LoginScreen extends React.Component {
             </Grid>
           </Content>
         </Row>
-        <Row size={5} style={{ justifyContent: 'flex-end'}} >
-          <Button bordered light small>
+        <Row size={7} style={{ justifyContent: 'flex-end' }} >
+          <Button bordered light small onPress={() => this.props.navigation.navigate('App')}>
             <Text>Skip</Text>
           </Button>
-
         </Row>
+
       </Grid >
 
 
@@ -98,15 +122,19 @@ const styles = StyleSheet.create({
   },
   item: {
     backgroundColor: 'rgba(200,200,200,0.3)',
-    borderColor: 'rgba(200,200,200,0.3)',
-    marginBottom: 15
+    //borderColor: 'rgba(200,200,200,0.3)',
+    marginBottom: 15,
+    borderColor: 'red',
+
+
   },
   icon: {
     marginLeft: 10,
     color: 'white'
   },
   input: {
-    color: 'white'
+    color: 'white',
+
   },
   loginButton: {
     backgroundColor: '#80ffff',

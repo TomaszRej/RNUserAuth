@@ -1,63 +1,83 @@
 import React from 'react';
-import { View, Dimensions, StyleSheet } from 'react-native';
-import { Button, Text, Container, Content, Item, Input, Icon, Form, H1, Label } from 'native-base';
+import { View, StyleSheet } from 'react-native';
+import { Grid, Row, Col, Left, Right, Button, Text, Container, Content, Item, Input, Icon, Form, H1, Label } from 'native-base';
 
 class RegisterScreen extends React.Component {
     static navigationOptions = {
         header: null,
     };
 
+    handleSubmitForm = () => {
+        console.log('test submiting form method')
+    }
+
     render() {
-        const { height: screenHeight } = Dimensions.get('window');
         return (
-            <Container style={styles.container}>
-                <Content style={styles.content} >
-                    <View style={{ flex: 1, height: screenHeight, justifyContent: 'space-around', alignItems: 'stretch' }}>
-                        <View style={styles.flexCenter}>
-                            <H1 style={styles.textColor}>REGISTER</H1>
-                        </View>
-                        <Form style={{ flex: 2, justifyContent: 'space-between' }}>
-                            <Item rounded style={{ backgroundColor: 'rgba(200,200,200,0.3)', borderColor: 'rgba(200,200,200,0.3)' }}  >
-                                <Icon active name='person' style={{ color: 'white' }} />
-
-                                <Input placeholderTextColor='rgba(255,255,255,0.6)' placeholder='E-mail' style={{ color: 'white' }} />
+            <Grid style={styles.container}>
+                <Row size={25}>
+                    <Col style={styles.flexCenter}>
+                        <H1 style={styles.textColor}>REGISTER</H1>
+                    </Col>
+                </Row>
+                <Row size={50}>
+                    <Content>
+                        <Form onSubmit={() => this.handleSubmitForm}
+                            style={{ alignItems: 'stretch' }}
+                        >
+                            <Item rounded style={styles.item} >
+                                <Icon active name='person' style={styles.icon} />
+                                <Input placeholderTextColor='rgba(255,255,255,0.6)' placeholder='Username' style={styles.input} />
                             </Item>
-                            <Item rounded style={{ backgroundColor: 'rgba(200,200,200,0.3)', borderColor: 'rgba(200,200,200,0.3)' }}  >
-                                <Icon name='mail' style={{ color: 'white' }} />
-                                <Input placeholderTextColor='rgba(255,255,255,0.6)' placeholder='E-mail' style={{ marginLeft: 20, color: 'white' }} />
+                            <Item rounded style={styles.item} >
+                                <Icon active name='mail' style={styles.icon} />
+                                <Input placeholderTextColor='rgba(255,255,255,0.6)' placeholder='E-mail' style={styles.input} />
                             </Item>
-                            <Item rounded style={{ backgroundColor: 'rgba(200,200,200,0.3)', borderColor: 'rgba(200,200,200,0.3)' }}  >
-
-                                <Icon active name='lock' style={{ marginLeft: 10, color: 'white' }} />
-                                <Input placeholderTextColor="white" placeholder="Password" style={{ color: 'white' }} />
-
-
+                            <Item rounded style={styles.item} >
+                                <Icon active name='lock' style={styles.icon} />
+                                <Input placeholderTextColor='rgba(255,255,255,0.6)' placeholder='Password' style={styles.input} />
                             </Item>
-                            <Item rounded style={{ backgroundColor: 'rgba(200,200,200,0.3)', borderColor: 'rgba(200,200,200,0.3)' }}  >
-                                <Icon active name='lock' style={{ color: 'white' }} />
-                                <Input placeholderTextColor="white" placeholder="Confirm password" style={{ marginLeft: 20, color: 'white' }} />
+                            <Item rounded style={styles.item} >
+                                <Icon active name='lock' style={styles.icon} />
+                                <Input placeholderTextColor='rgba(255,255,255,0.6)' placeholder='Confirm Password' style={styles.input} />
                             </Item>
-
-
-                            <Button rounded bordered block light><Text>Next</Text></Button>
+                            <Button rounded bordered block light style={styles.registerButton}><Text style={styles.loginButtonText}>Next</Text></Button>
                         </Form>
-                        {/* <View style={{ flex: 1, justifyContent: 'flex-end' }}> */}
-                        <View style={{ flex: 1, flexDirection: 'row', alignItems: 'flex-end', justifyContent: 'space-between', paddingBottom: 50 }}>
-                            {/* <Text style={{ color: 'white' }}>{'Terms && Conditions'}</Text>
-                                <Text style={{ color: 'white' }}>Login</Text> */}
-                            <View style={{ flex: 1, flexDirection: 'row', alignItems: 'flex-end', justifyContent: 'space-between' }}>
-                                <Button transparent light>
-                                    <Text>{'Terms && Conditions'}</Text></Button>
-                                <Button transparent light onPress={() => this.props.navigation.goBack()}>
-                                    <Text>Login</Text></Button>
-                            </View>
-                        </View>
-                        {/* </View> */}
+                    </Content>
+                </Row>
+                <Row size={25} style={{ alignItems: 'flex-end' }}>
+                    {/* <Grid>
+                        <Row style={{ alignItems: 'flex-end' }}>
+                            <Col >
+                                <Button light transparent onPress={() => this.props.navigation.navigate('Register')} >
+                                    <Text style={{ paddingLeft: 10 }}>{'Terms && Conditions'}</Text>
+                                </Button>
+                            </Col>
+                            <Col >
+                                <Row style={{ justifyContent: 'flex-end' }}>
+                                    <Button style={{ alignSelf: 'flex-end' }} light transparent onPress={() => this.props.navigation.goBack()} >
+                                        <Text style={{ paddingRight: 10 }}>Login</Text>
+                                    </Button>
+                                </Row>
+                            </Col>
 
-                    </View>
-                </Content>
+                        </Row>
+                    </Grid> */}
+                    <Row>
+                        <Left>
+                            <Button light transparent onPress={() => this.props.navigation.navigate('Register')} >
+                                <Text style={{ paddingLeft: 10 }}>{'Terms && Conditions'}</Text>
+                            </Button>
+                        </Left>
+                        <Right>
+                            <Button light transparent onPress={() => this.props.navigation.goBack()} >
+                                <Text style={{ paddingRight: 10 }}>Login</Text>
+                            </Button>
+                        </Right>
+                    </Row>
 
-            </Container>
+                </Row>
+    
+            </Grid>
 
         )
     }
@@ -68,7 +88,7 @@ export default RegisterScreen;
 const styles = StyleSheet.create({
     container: {
         backgroundColor: '#009999',
-
+        paddingHorizontal: 15
     },
     content: {
         marginHorizontal: 15,
@@ -81,6 +101,21 @@ const styles = StyleSheet.create({
     },
     textColor: {
         color: 'white'
+    },
+    item: {
+        backgroundColor: 'rgba(200,200,200,0.3)',
+        borderColor: 'rgba(200,200,200,0.3)',
+        marginBottom: 15
+    },
+    icon: {
+        marginLeft: 10,
+        color: 'white'
+    },
+    input: {
+        color: 'white'
+    },
+    registerButton: {
+        marginTop: 5
     }
 
 });
