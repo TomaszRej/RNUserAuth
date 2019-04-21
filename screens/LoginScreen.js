@@ -1,6 +1,6 @@
 import React from 'react';
 import { Keyboard, View, StyleSheet, } from 'react-native';
-import { Container, Content, Grid, Col, Row, Button, Text, Form, Item, Icon, Input, H1 } from 'native-base';
+import { Container, Content, Body, Grid, Col, Row, Right, Button, Text, Form, Item, Icon, Input, H1 } from 'native-base';
 
 class LoginScreen extends React.Component {
   static navigationOptions = {
@@ -12,25 +12,30 @@ class LoginScreen extends React.Component {
     this.state = {
       email: {
         value: "",
+        valid: false,
+        active: false,
         touched: false
       },
       password: {
         value: "",
+        valid: false,
+        active: false,
         touched: false
       },
     }
   }
 
-  hanldeChange = ({ value }) => {
+  hanldeChange = (key, value) => {
+
+
     this.setState(prevState => {
       return {
-          ...prevState,
-          ['email']: {
-            ...prevState['email'],
-            value: value,
-            touched: true
-          }
-        
+        ...prevState,
+        [key]: {
+          ...prevState[key],
+          value: value,
+          touched: true
+        }
       };
     });
   }
@@ -39,28 +44,49 @@ class LoginScreen extends React.Component {
     console.log('test submiting form method')
   }
 
-  // handleCloseIconPress = (key) => {
-  //   console.log('test handle close icon')
-  //   console.log(key, 'key powinnien byc email')
+  _toggleActiveItem = (key) => {
+    this.setState(prevState => {
+      return {
+        ...prevState,
+        [key]: {
+          ...prevState[key],
+          active: !prevState[key].active
+        }
+      };
+    });
+  }
 
-  //   this._clearingInput(key);
-  // }
+  _validate = (key) => {
+    //todo validation rules
+    const isValid = false;
+
+    this._toggleActiveItem(key);
+
+    this.setState(prevState => {
+      return {
+        ...prevState,
+        [key]: {
+          ...prevState[key],
+          valid: isValid,
+          touched: true
+        }
+
+      };
+    });
+
+  }
 
   _clearingInput = (key) => {
-    console.log('test handle close icon')
-    console.log(key, 'key z clearing inpuit')
-
-
     this.setState(prevState => {
       console.log(prevState)
       return {
-          ...prevState,
-          [key]: {
-            ...prevState[key],
-            value: '',
-            touched: false
-          }
-        
+        ...prevState,
+        [key]: {
+          ...prevState[key],
+          value: '',
+          touched: false
+        }
+
       };
     });
 
@@ -68,11 +94,9 @@ class LoginScreen extends React.Component {
   }
 
   render() {
-    const { email } = this.state;
+    const { email, password } = this.state;
     return (
-
       <Grid style={styles.container}>
-
         <Row size={45}>
           <Col style={styles.flexCenter}>
             <Row style={styles.logoContainer} >
@@ -92,23 +116,38 @@ class LoginScreen extends React.Component {
                   placeholder='E-mail'
                   style={styles.input}
                   value={email.value}
-                  onChangeText={(email) => this.hanldeChange({ email })}
-                // onBlur={() => this.setState({ email: 'EMAIL Z ON BLUR' })}
+                  onChangeText={(value) => this.hanldeChange('email', value)}
+                  onFocus={() => this._toggleActiveItem('email')}
+                  onBlur={() => this._validate('email')}
                 />
-
-                {this.state.email.touched ? <Icon name='close' onPress={() => this._clearingInput('email')} /> : null}
-
-
+                {email.touched ? <Icon name='close' style={styles.closeIcon} onPress={() => this._clearingInput('email')} /> : null}
               </Item>
-              <Item rounded style={styles.item} >
+              {/* {email.touched && email.valid ? */}
+              {!email.active && !email.valid && email.touched ?
+                <Row style={{ justifyContent: 'flex-end' }}>
+                  <Text style={{ color: 'red', marginTop: 5 }}>{'error message'}</Text>
+                </Row> : null
+              }
+              <Item rounded style={styles.item}>
                 <Icon active name='lock' style={styles.icon} />
+
                 <Input
                   placeholderTextColor='rgba(255,255,255,0.6)'
                   placeholder='Password'
                   style={styles.input}
+                  value={password.value}
+                  onChangeText={(value) => this.hanldeChange('password', value)}
+                  onFocus={() => this._toggleActiveItem('password')}
+                  onBlur={() => this._validate('password')}
                 />
+                {this.state.password.touched ? <Icon name='close' style={styles.closeIcon} onPress={() => this._clearingInput('password')} /> : null}
               </Item>
-              <Button rounded block style={styles.loginButton}><Text style={styles.loginButtonText}>Login</Text></Button>
+              {!password.active && !password.valid && password.touched ?
+                <Row style={{ justifyContent: 'flex-end' }}>
+                  <Text style={{ color: 'red', marginTop: 5 }}>{'error message'}</Text>
+                </Row> : null
+              }
+              <Button disabled={email.valid && password.valid ? false : true} rounded block style={styles.loginButton}><Text style={styles.loginButtonText}>Login</Text></Button>
             </Form>
             <Grid>
               <Row >
@@ -134,9 +173,6 @@ class LoginScreen extends React.Component {
           </Button>
         </Row>
       </Grid >
-
-
-
     )
   }
 }
@@ -160,6 +196,11 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center'
   },
+  errorText: {
+    backgroundColor: 'rgba(255,0,0,0.7)',
+    borderRadius: 30,
+    color: 'white'
+  },
   logoContainer: {
     backgroundColor: 'white',
     borderRadius: 100,
@@ -176,7 +217,7 @@ const styles = StyleSheet.create({
   item: {
     backgroundColor: 'rgba(200,200,200,0.3)',
     borderColor: 'rgba(200,200,200,0.3)',
-    marginBottom: 15,
+    marginTop: 15,
 
 
 
@@ -185,13 +226,20 @@ const styles = StyleSheet.create({
     marginLeft: 10,
     color: 'white'
   },
+  closeIcon: {
+    marginRight: 10,
+    color: 'white',
+    fontSize: 30
+  }
+  ,
   input: {
     color: 'white',
 
   },
   loginButton: {
     backgroundColor: '#80ffff',
-    marginTop: 5
+
+    marginTop: 15
   },
   loginButtonText: {
     color: '#009999'
