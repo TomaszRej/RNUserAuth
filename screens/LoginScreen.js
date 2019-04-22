@@ -1,6 +1,8 @@
 import React from 'react';
 import { Keyboard, View, StyleSheet, } from 'react-native';
 import { Container, Content, Body, Grid, Col, Row, Right, Button, Text, Form, Item, Icon, Input, H1 } from 'native-base';
+import validate from '../utility/validation';
+
 
 class LoginScreen extends React.Component {
   static navigationOptions = {
@@ -13,19 +15,36 @@ class LoginScreen extends React.Component {
       email: {
         value: "",
         valid: false,
-        active: false,
-        touched: false
+        validationRules: {
+          notEmpty: true,
+          isEmail: true,
+
+        },
+        touched: false,
+        errors: []
+
       },
       password: {
         value: "",
         valid: false,
-        active: false,
-        touched: false
+        validationRules: {
+          notEmpty: true,
+          minLength: 6
+        },
+        touched: false,
+        errors: []
+
       },
+
     }
   }
 
   hanldeChange = (key, value) => {
+
+    // const backToInput = this.state[key].valid === false && this.state[key].touched === true ? true : false;
+    //  if (backToInput) { this._validate(key) };
+
+    const { isValid, errors } = this._validate(key);
 
 
     this.setState(prevState => {
@@ -34,7 +53,10 @@ class LoginScreen extends React.Component {
         [key]: {
           ...prevState[key],
           value: value,
-          touched: true
+          //valid: isValid,
+          touched: true,
+          //errors: errors
+
         }
       };
     });
@@ -45,11 +67,16 @@ class LoginScreen extends React.Component {
   }
 
   _toggleActiveItem = (key) => {
+    //const backToInput = this.state[key].valid === false && this.state[key].touched === true ? true : false;
+    // if (backToInput) { this._validate(key) };
+
     this.setState(prevState => {
       return {
         ...prevState,
         [key]: {
           ...prevState[key],
+          active: !prevState[key].active,
+          //active: backToInput ? false : !prevState[key].active
           active: !prevState[key].active
         }
       };
@@ -58,27 +85,36 @@ class LoginScreen extends React.Component {
 
   _validate = (key) => {
     //todo validation rules
-    const isValid = false;
+
+    const { value, validationRules } = this.state[key]
+
+
+    //const isValid = false;
+
+    const { isValid, errors } = validate(value, validationRules)
+    //console.warn( errors, 'errors po validate 1')
+
 
     this._toggleActiveItem(key);
-
     this.setState(prevState => {
       return {
         ...prevState,
         [key]: {
           ...prevState[key],
           valid: isValid,
-          touched: true
+          touched: true,
+          errors: errors
         }
 
       };
     });
 
+    return { isValid, errors };
+
   }
 
   _clearingInput = (key) => {
     this.setState(prevState => {
-      console.log(prevState)
       return {
         ...prevState,
         [key]: {
@@ -93,8 +129,25 @@ class LoginScreen extends React.Component {
 
   }
 
+  renderErrors = (key) => {
+
+    let error = '';
+
+    if (this.state[key].errors['notEmpty']) {
+      error = this.state[key].errors['notEmpty'];
+    } else if (this.state[key].errors['minLength']) {
+      error = this.state[key].errors['minLength'];
+    } else if (this.state[key].errors['isEmail']) {
+      error = this.state[key].errors['isEmail'];
+    }
+
+
+    return error;
+  }
+
   render() {
     const { email, password } = this.state;
+ 
     return (
       <Grid style={styles.container}>
         <Row size={45}>
@@ -123,9 +176,11 @@ class LoginScreen extends React.Component {
                 {email.touched ? <Icon name='close' style={styles.closeIcon} onPress={() => this._clearingInput('email')} /> : null}
               </Item>
               {/* {email.touched && email.valid ? */}
-              {!email.active && !email.valid && email.touched ?
+              {!email.valid && email.touched ?
                 <Row style={{ justifyContent: 'flex-end' }}>
-                  <Text style={{ color: 'red', marginTop: 5 }}>{'error message'}</Text>
+                  <Text style={styles.errorMessage}>
+                    {this.renderErrors('email')}
+                  </Text>
                 </Row> : null
               }
               <Item rounded style={styles.item}>
@@ -142,9 +197,11 @@ class LoginScreen extends React.Component {
                 />
                 {this.state.password.touched ? <Icon name='close' style={styles.closeIcon} onPress={() => this._clearingInput('password')} /> : null}
               </Item>
-              {!password.active && !password.valid && password.touched ?
+              {!password.valid && password.touched ?
                 <Row style={{ justifyContent: 'flex-end' }}>
-                  <Text style={{ color: 'red', marginTop: 5 }}>{'error message'}</Text>
+                  <Text style={styles.errorMessage}>
+                    {this.renderErrors('password')}
+                  </Text>
                 </Row> : null
               }
               <Button disabled={email.valid && password.valid ? false : true} rounded block style={styles.loginButton}><Text style={styles.loginButtonText}>Login</Text></Button>
@@ -235,6 +292,11 @@ const styles = StyleSheet.create({
   input: {
     color: 'white',
 
+  },
+  errorMessage: {
+    color: 'red',
+    marginTop: 5,
+    fontSize: 12
   },
   loginButton: {
     backgroundColor: '#80ffff',
