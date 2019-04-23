@@ -11,6 +11,7 @@ class LoginScreen extends React.Component {
 
   constructor(props) {
     super(props);
+
     this.state = {
       email: {
         value: "",
@@ -33,19 +34,18 @@ class LoginScreen extends React.Component {
         },
         touched: false,
         errors: []
-
       },
-
     }
   }
 
-  hanldeChange = (key, value) => {
+  hanldeChange = (key, value, onBlur) => {
+    const { touched, validationRules } = this.state[key];
+    const validationResult = {};
 
-    // const backToInput = this.state[key].valid === false && this.state[key].touched === true ? true : false;
-    //  if (backToInput) { this._validate(key) };
-
-    const { isValid, errors } = this._validate(key);
-
+    if (touched || onBlur) {
+      validationResult.isValid = validate(value, validationRules).isValid;
+      validationResult.errors = validate(value, validationRules).errors;
+    }
 
     this.setState(prevState => {
       return {
@@ -53,9 +53,9 @@ class LoginScreen extends React.Component {
         [key]: {
           ...prevState[key],
           value: value,
-          //valid: isValid,
+          valid: validationResult.isValid ? validationResult.isValid : false,
           touched: true,
-          //errors: errors
+          errors: validationResult.errors ? validationResult.errors : []
 
         }
       };
@@ -66,52 +66,13 @@ class LoginScreen extends React.Component {
     console.log('test submiting form method')
   }
 
-  _toggleActiveItem = (key) => {
-    //const backToInput = this.state[key].valid === false && this.state[key].touched === true ? true : false;
-    // if (backToInput) { this._validate(key) };
 
-    this.setState(prevState => {
-      return {
-        ...prevState,
-        [key]: {
-          ...prevState[key],
-          active: !prevState[key].active,
-          //active: backToInput ? false : !prevState[key].active
-          active: !prevState[key].active
-        }
-      };
-    });
-  }
+  // _validate = (key) => {
+  //   const { value, validationRules } = this.state[key];
+  //   const { isValid, errors } = validate(value, validationRules)
+  //   return { isValid, errors };
 
-  _validate = (key) => {
-    //todo validation rules
-
-    const { value, validationRules } = this.state[key]
-
-
-    //const isValid = false;
-
-    const { isValid, errors } = validate(value, validationRules)
-    //console.warn( errors, 'errors po validate 1')
-
-
-    this._toggleActiveItem(key);
-    this.setState(prevState => {
-      return {
-        ...prevState,
-        [key]: {
-          ...prevState[key],
-          valid: isValid,
-          touched: true,
-          errors: errors
-        }
-
-      };
-    });
-
-    return { isValid, errors };
-
-  }
+  // }
 
   _clearingInput = (key) => {
     this.setState(prevState => {
@@ -125,29 +86,28 @@ class LoginScreen extends React.Component {
 
       };
     });
-
-
   }
 
-  renderErrors = (key) => {
+  renderError = (key) => {
+
+    const { errors } = this.state[key]
 
     let error = '';
 
-    if (this.state[key].errors['notEmpty']) {
-      error = this.state[key].errors['notEmpty'];
-    } else if (this.state[key].errors['minLength']) {
-      error = this.state[key].errors['minLength'];
-    } else if (this.state[key].errors['isEmail']) {
-      error = this.state[key].errors['isEmail'];
+    if (errors['notEmpty']) {
+      error = errors['notEmpty'];
+    } else if (errors['minLength']) {
+      error = errors['minLength'];
+    } else if (errors['isEmail']) {
+      error = errors['isEmail'];
     }
-
 
     return error;
   }
 
   render() {
     const { email, password } = this.state;
- 
+
     return (
       <Grid style={styles.container}>
         <Row size={45}>
@@ -169,42 +129,45 @@ class LoginScreen extends React.Component {
                   placeholder='E-mail'
                   style={styles.input}
                   value={email.value}
-                  onChangeText={(value) => this.hanldeChange('email', value)}
-                  onFocus={() => this._toggleActiveItem('email')}
-                  onBlur={() => this._validate('email')}
+                  onChangeText={value => this.hanldeChange('email', value)}
+                  onBlur={() => this.hanldeChange('email', email.value, true)}
                 />
-                {email.touched ? <Icon name='close' style={styles.closeIcon} onPress={() => this._clearingInput('email')} /> : null}
+                {email.touched && <Icon name='close' style={styles.closeIcon} onPress={() => this._clearingInput('email')} />}
               </Item>
-              {/* {email.touched && email.valid ? */}
-              {!email.valid && email.touched ?
+
+              {!email.valid && email.touched &&
                 <Row style={{ justifyContent: 'flex-end' }}>
                   <Text style={styles.errorMessage}>
-                    {this.renderErrors('email')}
+                    {this.renderError('email')}
                   </Text>
-                </Row> : null
+                </Row>
               }
               <Item rounded style={styles.item}>
                 <Icon active name='lock' style={styles.icon} />
-
                 <Input
                   placeholderTextColor='rgba(255,255,255,0.6)'
                   placeholder='Password'
                   style={styles.input}
                   value={password.value}
                   onChangeText={(value) => this.hanldeChange('password', value)}
-                  onFocus={() => this._toggleActiveItem('password')}
-                  onBlur={() => this._validate('password')}
+                  onBlur={() => this.hanldeChange('password', password.value, true)}
                 />
-                {this.state.password.touched ? <Icon name='close' style={styles.closeIcon} onPress={() => this._clearingInput('password')} /> : null}
+                {this.state.password.touched &&
+                  <Icon name='close'
+                    style={styles.closeIcon}
+                    onPress={() => this._clearingInput('password')}
+                  />}
               </Item>
-              {!password.valid && password.touched ?
+              {!password.valid && password.touched &&
                 <Row style={{ justifyContent: 'flex-end' }}>
                   <Text style={styles.errorMessage}>
-                    {this.renderErrors('password')}
+                    {this.renderError('password')}
                   </Text>
-                </Row> : null
+                </Row>
               }
-              <Button disabled={email.valid && password.valid ? false : true} rounded block style={styles.loginButton}><Text style={styles.loginButtonText}>Login</Text></Button>
+              <Button disabled={email.valid && password.valid ? false : true} rounded block style={styles.loginButton}>
+                <Text style={styles.loginButtonText}>Login</Text>
+              </Button>
             </Form>
             <Grid>
               <Row >

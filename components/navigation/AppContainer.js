@@ -33,7 +33,7 @@ const AppNavigator = createStackNavigator(
 //             headerLeft: (
 //                 <TouchableOpacity onPress={() => navigation.toggleDrawer()}>
 //                     <View style={{paddingHorizontal: 10}}>
-//                         {/* <Icon name='md-menu' size={24}/> */}
+//                         {/* <Icon name='user' size={24}/> */}
 //                         <Text>Zamiast ikony</Text>
 //                     </View>
 //                 </TouchableOpacity>
