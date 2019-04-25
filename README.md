@@ -5,6 +5,8 @@
 * [Redux](https://redux.js.org/)
 
 
-![Alt text](./assets/registerForgot.jpg?raw=true "Register and Forgot Screens view")
 
 ![Alt text](./assets/login.jpg?raw=true "Login Screen view")
+
+![Alt text](./assets/registerForgot.jpg?raw=true "Register and Forgot Screens view")
+
